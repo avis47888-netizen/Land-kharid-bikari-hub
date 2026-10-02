@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Land Kharid Bikri - पूरे भारत में जमीन खरीदें और बेचें</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f8fafc; color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; }
+    
+    /* Top Bar */
+    .top-bar { background-color: #064e3b; color: #a7f3d0; font-size: 13px; padding: 8px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+    .top-bar a { color: #fde68a; text-decoration: none; font-weight: bold; }
+    
+    /* Header */
+    header { background-color: #047857; color: white; padding: 12px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .logo { font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .nav-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    
+    .btn { padding: 8px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-amber { background-color: #f59e0b; color: #1e293b; }
+    .btn-admin { background-color: #0f172a; color: #fde68a; border: 1px solid #f59e0b; }
+    .btn-green { background-color: #065f46; color: white; border: 1px solid #34d399; }
+    .btn-wa { background-color: #16a34a; color: white; }
+    .btn-info { background-color: #0284c7; color: white; }
+    .btn-map { background-color: #475569; color: white; }
+    .btn-save { background-color: #15803d; color: white; }
+    .btn-danger { background-color: #dc2626; color: white; }
+    
+    /* Hero */
+    .hero { background: linear-gradient(135deg, #064e3b, #047857); color: white; text-align: center; padding: 30px 16px; }
+    .hero h1 { font-size: 24px; margin-bottom: 6px; }
+    .hero p { color: #a7f3d0; font-size: 13px; margin-bottom: 18px; }
+    
+    .search-box { background: white; padding: 14px; border-radius: 8px; max-width: 850px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; color: #333; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .search-box label { font-size: 11px; font-weight: bold; color: #64748b; display: block; margin-bottom: 4px; }
+    .search-box select, .search-box input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; }
+    
+    /* Layout */
+    .container { max-width: 1150px; margin: 20px auto; padding: 0 16px; width: 100%; flex-grow: 1; }
+    .sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+    
+    /* Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 20px; }
+    .card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+    .card-img-wrap { position: relative; height: 190px; background: #e2e8f0; cursor: pointer; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .badge { position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; }
+    .badge-verified { background-color: #16a34a; color: white; }
+    .badge-pending { background-color: #f59e0b; color: #1e293b; }
+    .badge-photos { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    
+    .card-body { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; }
+    .card-price { font-size: 19px; font-weight: bold; color: #047857; margin-bottom: 4px; }
+    .card-title { font-size: 15px; font-weight: bold; margin-bottom: 6px; }
+    .card-info { font-size: 12px; color: #475569; margin-bottom: 4px; line-height: 1.5; }
+    .khatauni-tag { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 6px; }
+    
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f1f5f9; }
+    .btn-buy { grid-column: span 2; background-color: #047857; color: white; padding: 9px; border-radius: 5px; font-weight: bold; font-size: 13px; text-align: center; border: none; cursor: pointer; }
+    
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: white; padding: 20px; border-radius: 10px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 3px; color: #334155; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; }
+
+    /* फोटो गैलरी स्टाइल */
+    .gallery-viewer { position: relative; width: 100%; height: 280px; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+    .gallery-main-img { width: 100%; height: 100%; object-fit: contain; }
+    
+    .gal-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; font-size: 20px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; z-index: 2; }
+    .gal-nav-btn:hover { background: rgba(0,0,0,0.9); }
+    .gal-prev { left: 10px; }
+    .gal-next { right: 10px; }
+    .gal-counter { position: absolute; bottom: 8px; right: 10px; background: rgba(0,0,0,0.7); color: white; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+
+    .gallery-thumbs-list { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px; }
+    .gallery-thumb-item { width: 70px; height: 55px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 3px solid transparent; opacity: 0.6; transition: 0.2s; flex-shrink: 0; }
+    .gallery-thumb-item:hover { opacity: 0.9; }
+    .gallery-thumb-item.selected { border-color: #047857; opacity: 1; transform: scale(1.04); }
+
+    /* Map Frame */
+    .map-frame { width: 100%; height: 280px; border: none; border-radius: 8px; }
+
+    /* Admin Table */
+    .table-wrap { width: 100%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 750px; text-align: left; }
+    th, td { padding: 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    th { background: #f8fafc; color: #475569; }
+    
+    /* Footer */
+    footer { background: #0f172a; color: #94a3b8; padding: 25px 16px; font-size: 13px; margin-top: auto; }
+    .footer-grid { max-width: 1150px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .footer-bottom { text-align: center; border-top: 1px solid #334155; margin-top: 20px; padding-top: 12px; font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <!-- टॉप सपोर्ट बार -->
+  <div class="top-bar">
+    <div>
+      हेल्पलाइन: <a href="tel:+919696311685">+91 9696311685</a> |
+      ईमेल: <a href="mailto:findoffers05@gmail.com">findoffers05@gmail.com</a>
+    </div>
+    <div>📍 सुरक्षित एडमिन प्रमाणीकरण सक्रिय</div>
+  </div>
+
+  <!-- हेडर -->
+  <header>
+    <div class="logo" onclick="showPortal('user')">
+      <span>🌾</span> Land Kharid Bikri
+    </div>
+    <div class="nav-btns">
+      <button type="button" class="btn btn-green" onclick="showPortal('user')">🏠 जमीन खरीदें</button>
+      <button type="button" class="btn btn-amber" onclick="toggleModal('sellModal')">➕ जमीन बेचें</button>
+      <button type="button" class="btn btn-admin" onclick="handleAdminEntry()">🛡️ एडमिन लॉगिन</button>
+    </div>
+  </header>
+
+  <!-- 1. यूज़र पोर्टल -->
+  <div id="userPortal">
+    <section class="hero">
+      <h1>अपनी पसंद का खेत, प्लॉट या जमीन खोजें</h1>
+      <p>फोटो गैलरी, फोटो डाउनलोड, गूगल नक्शा और खतौनी सहित</p>
+      
+      <div class="search-box">
+        <div>
+          <label>राज्य</label>
+          <select id="stateFilter" onchange="runFilter()">
+            <option value="">सभी राज्य</option>
+            <option value="उत्तर प्रदेश">उत्तर प्रदेश</option>
+            <option value="बिहार">बिहार</option>
+            <option value="राजस्थान">राजस्थान</option>
+            <option value="मध्य प्रदेश">मध्य प्रदेश</option>
+          </select>
+        </div>
+        <div>
+          <label>ज़िला (District)</label>
+          <input type="text" id="districtFilter" oninput="runFilter()" placeholder="उदा. मिर्ज़ापुर, पटना">
+        </div>
+        <div>
+          <label>जमीन का प्रकार</label>
+          <select id="typeFilter" onchange="runFilter()">
+            <option value="">सभी प्रकार</option>
+            <option value="कृषि भूमि">कृषि भूमि (खेती)</option>
+            <option value="आवासीय प्लॉट">आवासीय प्लॉट</option>
+            <option value="कमर्शियल">कमर्शियल</option>
+          </select>
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button type="button" class="btn btn-amber" style="width:100%;" onclick="clearFilters()">फ़िल्टर हटाएं</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="sec-head">
+        <h2>📍 उपलब्ध जमीनें (<span id="userCount">0</span>)</h2>
+        <span style="font-size:12px; color:#16a34a; font-weight:bold;">✓ सभी ज़मीनें फोटो व लोकेशन सहित</span>
+      </div>
+      
+      <div id="landGrid" class="grid"></div>
+    </div>
+  </div>
+
+  <!-- 2. एडमिन पोर्टल -->
+  <div id="adminPortal" style="display:none;" class="container">
+    <div class="sec-head">
+      <div>
+        <h2>🛡️ एडमिन कंट्रोल एवं खतौनी सत्यापन डेस्क</h2>
+        <p style="font-size:12px; color:#64748b;">लिस्टिंग्स को सत्यापित करें, खतौनी जांचें या हटाएं</p>
+      </div>
+      <div>
+        <button type="button" class="btn btn-green" onclick="showPortal('user')">⬅ मुख्य पोर्टल</button>
+        <button type="button" class="btn btn-danger" onclick="adminLogout()">लॉगआउट</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>आईडी</th>
+            <th>जमीन विवरण</th>
+            <th>स्थान (ज़िला / राज्य)</th>
+            <th>कीमत व रकबा</th>
+            <th>खतौनी नम्बर</th>
+            <th>मालिक व फोन</th>
+            <th>सत्यापन स्थिति</th>
+            <th>कार्रवाई</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. पॉपअप मॉडल्स -->
+
+  <!-- फोटो गैलरी मॉडल -->
+  <div id="galleryModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:580px;">
+      <div class="modal-head">
+        <h3 id="galleryTitle" style="font-size:15px;">📸 फोटो गैलरी</h3>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" onclick="saveCurrentImage()" class="btn btn-save" style="padding:5px 10px; font-size:11px;">
+            ⬇ फोटो सेव करें
+          </button>
+          <span onclick="toggleModal('galleryModal')" style="cursor:pointer; font-weight:bold; font-size:18px;">✕</span>
+        </div>
+      </div>
+      <div>
+        <div class="gallery-viewer">
+          <button type="button" class="gal-nav-btn gal-prev" onclick="prevGalleryImage()">❮</button>
+          <img id="galleryMainImg" src="" alt="Land View" class="gallery-main-img">
+          <button type="button" class="gal-nav-btn gal-next" onclick="nextGalleryImage()">❯</button>
+          <span id="galleryCounter" class="gal-counter">1 / 1</span>
+        </div>
+        <p style="font-size:12px; color:#64748b; margin-bottom:6px;">अन्य फोटो देखने के लिए नीचे क्लिक करें:</p>
+        <div id="galleryThumbsContainer" class="gallery-thumbs-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- नक्शा मॉडल -->
+  <div id="mapModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:600px;">
+      <div class="modal-head">
+        <h3 id="mapModalTitle">🗺️ जमीन का लोकेशन नक्शा</h3>
+        <span onclick="toggleModal('mapModal')" style="cursor:pointer; font-weight:bold; font-size:18px;">✕</span>
+      </div>
+      <div>
+        <iframe id="mapFrame" class="map-frame" src="" loading="lazy"></iframe>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <span id="mapLocText" style="font-size:12px; color:#475569; font-weight:600;"></span>
+          <a id="mapExternalLink" href="" target="_blank" class="btn btn-wa" style="font-size:11px; padding:6px 10px;">
+            Google Maps में खोलें
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- जमीन बेचें फॉर्म -->
+  <div id="sellModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>अपनी जमीन लिस्ट करें (बेचें)</h3>
+        <span onclick="toggleModal('sellModal')" style="cursor:pointer; font-weight:bold; font-size:18px;">✕</span>
+      </div>
+      <form onsubmit="saveAndSendLand(event)">
+        <div class="form-group">
+          <label>जमीन का शीर्षक (Title)</label>
+          <input type="text" id="addTitle" required placeholder="जैसे: 3 बीघा उपजाऊ कृषि भूमि">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div class="form-group">
+            <label>राज्य</label>
+            <input type="text" id="addState" required placeholder="उत्तर प्रदेश">
+          </div>
+          <div class="form-group">
+            <label>ज़िला (District)</label>
+            <input type="text" id="addDistrict" required placeholder="मिर्ज़ापुर">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>तहसील / गाँव / इलाका</label>
+          <input type="text" id="addVillage" required placeholder="चुनार">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div class="form-group">
+            <label>कुल कीमत (₹)</label>
+            <input type="number" id="addPrice" required placeholder="1850000">
+          </div>
+          <div class="form-group">
+            <label>रकबा / क्षेत्रफल</label>
+            <input type="text" id="addArea" required placeholder="3 बीघा">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div class="form-group">
+            <label>जमीन का प्रकार</label>
+            <select id="addType">
+              <option value="कृषि भूमि">कृषि भूमि</option>
+              <option value="आवासीय प्लॉट">आवासीय प्लॉट</option>
+              <option value="कमर्शियल">कमर्शियल</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>खतौनी नम्बर (Khatauni No.)</label>
+            <input type="text" id="addKhatauni" required placeholder="उदा: खाता 58">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div class="form-group">
+            <label>मालिक का नाम</label>
+            <input type="text" id="addOwner" required placeholder="विक्रेता का नाम">
+          </div>
+          <div class="form-group">
+            <label>मोबाइल नंबर</label>
+            <input type="tel" id="addPhone" required placeholder="9696311685">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-wa" style="width:100%; margin-top:8px;">
+          📲 व्हाट्सएप पर भेजें और लिस्ट करें
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- जमीन खरीदें मॉडल -->
+  <div id="buyModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>जमीन खरीदने में रुचि (Buy Inquiry)</h3>
+        <span onclick="toggleModal('buyModal')" style="cursor:pointer; font-weight:bold; font-size:18px;">✕</span>
+      </div>
+      <form onsubmit="sendBuyInquiry(event)">
+        <input type="hidden" id="buyLandId">
+        <div class="form-group">
+          <label>चयनित जमीन</label>
+          <input type="text" id="buyLandTitle" readonly style="background:#f1f5f9;">
+        </div>
+        <div class="form-group">
+          <label>आपका नाम (खरीदार)</label>
+          <input type="text" id="buyerName" required placeholder="अपना पूरा नाम लिखें">
+        </div>
+        <div class="form-group">
+          <label>आपका मोबाइल नंबर</label>
+          <input type="tel" id="buyerPhone" required placeholder="अपना फोन नंबर लिखें">
+        </div>
+        <div class="form-group">
+          <label>संदेश / प्रस्ताव</label>
+          <textarea id="buyerMsg" rows="3" placeholder="मुझे यह जमीन देखनी है और बात करनी है..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-wa" style="width:100%;">
+          📲 व्हाट्सएप पर सौदा भेजें
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- एडमिन लॉगिन मॉडल (केवल आईडी और पासवर्ड से सुरक्षित) -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:360px; text-align:center;">
+      <h3 style="margin-bottom:12px;">एडमिन प्रमाणीकरण</h3>
+      
+      <div class="form-group" style="text-align:left;">
+        <label>यूजर आईडी</label>
+        <input type="text" id="adminUser" placeholder="यूजर आईडी दर्ज करें" autocomplete="off">
+      </div>
+      <div class="form-group" style="text-align:left;">
+        <label>पासवर्ड</label>
+        <input type="password" id="adminPass" placeholder="पासवर्ड दर्ज करें" onkeydown="if(event.key==='Enter') processAdminLogin();">
+      </div>
+      <div id="loginError" style="display:none; color:#dc2626; font-size:12px; margin-bottom:10px; font-weight:bold;">गलत यूजर आईडी या पासवर्ड!</div>
+      
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button type="button" class="btn" style="flex:1; background:#e2e8f0;" onclick="toggleModal('loginModal')">रद्द करें</button>
+        <button type="button" class="btn btn-admin" style="flex:1;" onclick="processAdminLogin()">लॉगिन</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- फुटर -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4 style="color:white; margin-bottom:8px;">🌾 Land Kharid Bikri</h4>
+        <p>पूरे भारत में सुरक्षित, पारदर्शी और सत्यापित जमीनों की खरीद-बिक्री।</p>
+      </div>
+      <div>
+        <h4 style="color:white; margin-bottom:8px;">हेल्पलाइन एवं व्हाट्सएप</h4>
+        <p>फोन / व्हाट्सएप: <a href="tel:+919696311685" style="color:#fde68a;">+91 9696311685</a></p>
+        <p>ईमेल: <a href="mailto:findoffers05@gmail.com" style="color:#fde68a;">findoffers05@gmail.com</a></p>
+      </div>
+      <div>
+        <h4 style="color:white; margin-bottom:8px;">सीधा सपोर्ट</h4>
+        <a href="https://wa.me/919696311685?text=नमस्ते,%20मुझे%20सहायता%20चाहिए।" target="_blank" class="btn btn-wa">सीधे व्हाट्सएप पर बात करें</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Land Kharid Bikri • हेल्पलाइन: +91 9696311685 • ईमेल: findoffers05@gmail.com
+    </div>
+  </footer>
+
+  <script>
+    const initialData = [
+      {
+        id: 101,
+        title: "हाइवे से सटा 3 बीघा उपजाऊ खेत",
+        state: "उत्तर प्रदेश",
+        district: "मिर्ज़ापुर",
+        village: "चुनार",
+        price: 1850000,
+        area: "3 बीघा",
+        type: "कृषि भूमि",
+        khatauni: "खाता सं. 00124",
+        owner: "रामेश सिंह",
+        phone: "9696311685",
+        status: "सत्यापित",
+        images: [
+          "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+          "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=800",
+          "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?w=800"
+        ],
+        mapQuery: "Chunar, Mirzapur, Uttar Pradesh"
+      },
+      {
+        id: 102,
+        title: "शहर के पास आवासीय प्लॉट (तुरंत रजिस्ट्री)",
+        state: "बिहार",
+        district: "पटना",
+        village: "बिहटा",
+        price: 1200000,
+        area: "1200 वर्ग फीट",
+        type: "आवासीय प्लॉट",
+        khatauni: "प्लॉट सं. 88 / खाता 45",
+        owner: "अमित कुमार",
+        phone: "9696311685",
+        status: "सत्यापित",
+        images: [
+          "https://images.unsplash.com/photo-1524813686514-a57563d77d61?w=800",
+          "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800",
+          "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800"
+        ],
+        mapQuery: "Bihta, Patna, Bihar"
+      }
+    ];
+
+    let currentGalleryImages = [];
+    let currentGalleryIndex = 0;
+
+    let lands = JSON.parse(localStorage.getItem('saved_lands_v3')) || initialData;
+    let isAdminLoggedIn = false;
+
+    function saveToStorage() {
+      localStorage.setItem('saved_lands_v3', JSON.stringify(lands));
+    }
+
+    function renderUserLands(list = lands) {
+      const grid = document.getElementById('landGrid');
+      const verifiedList = list.filter(item => item.status === "सत्यापित");
+      document.getElementById('userCount').innerText = verifiedList.length;
+      grid.innerHTML = "";
+
+      if(verifiedList.length === 0) {
+        grid.innerHTML = "<p style='color:#64748b;'>कोई सत्यापित जमीन नहीं मिली।</p>";
+        return;
+      }
+
+      verifiedList.forEach(item => {
+        const mainImg = (item.images && item.images.length > 0) ? item.images[0] : "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500";
+        const photoCount = item.images ? item.images.length : 1;
+
+        grid.innerHTML += `
+          <div class="card">
+            <div class="card-img-wrap" onclick="openGallery(${item.id})">
+              <img src="${mainImg}" alt="${item.title}">
+              <span class="badge badge-verified">✓ सत्यापित</span>
+              <span class="badge-photos">📸 ${photoCount} फोटो</span>
+            </div>
+            <div class="card-body">
+              <div class="card-price">₹${(item.price/100000).toFixed(2)} लाख <small style="font-size:12px; color:#64748b;">(${item.area})</small></div>
+              <div class="card-title">${item.title}</div>
+              <div class="card-info">📍 <b>ज़िला:</b> ${item.district}, ${item.state} (${item.village})</div>
+              <div class="card-info">🌾 <b>प्रकार:</b> ${item.type}</div>
+              <div><span class="khatauni-tag">📜 खतौनी सं.: ${item.khatauni}</span></div>
+              
+              <div style="display:flex; gap:6px; margin-top:10px;">
+                <button type="button" onclick="openGallery(${item.id})" class="btn btn-info" style="flex:1; font-size:11px; padding:6px;">📸 गैलरी देखें</button>
+                <button type="button" onclick="openMapModal('${item.mapQuery}', '${item.village}, ${item.district}')" class="btn btn-map" style="flex:1; font-size:11px; padding:6px;">🗺️ लोकेशन नक्शा</button>
+              </div>
+
+              <div class="card-actions">
+                <button type="button" onclick="openBuyModal(${item.id})" class="btn-buy">🤝 जमीन खरीदें / रुचि दर्ज करें</button>
+                <a href="tel:${item.phone}" class="btn btn-green">📞 कॉल</a>
+                <a href="https://wa.me/919696311685?text=नमस्ते,%20मुझे%20इस%20जमीन%20में%20रुचि%20है:%20${encodeURIComponent(item.title)}%20(खतौनी:%20${encodeURIComponent(item.khatauni)})" target="_blank" class="btn btn-wa">💬 व्हाट्सएप</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function openGallery(id) {
+      const item = lands.find(x => x.id === id);
+      if(!item) return;
+
+      document.getElementById('galleryTitle').innerText = `📸 फोटो गैलरी: ${item.title}`;
+      currentGalleryImages = (item.images && item.images.length > 0) ? item.images : ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800"];
+      currentGalleryIndex = 0;
+
+      updateGalleryView();
+      renderGalleryThumbnails();
+      toggleModal('galleryModal');
+    }
+
+    function updateGalleryView() {
+      const mainImg = document.getElementById('galleryMainImg');
+      mainImg.src = currentGalleryImages[currentGalleryIndex];
+      document.getElementById('galleryCounter').innerText = `${currentGalleryIndex + 1} / ${currentGalleryImages.length}`;
+
+      document.querySelectorAll('.gallery-thumb-item').forEach((thumb, idx) => {
+        if(idx === currentGalleryIndex) {
+          thumb.classList.add('selected');
+        } else {
+          thumb.classList.remove('selected');
+        }
+      });
+    }
+
+    function renderGalleryThumbnails() {
+      const thumbsBox = document.getElementById('galleryThumbsContainer');
+      thumbsBox.innerHTML = "";
+
+      currentGalleryImages.forEach((imgUrl, idx) => {
+        const thumb = document.createElement('img');
+        thumb.src = imgUrl;
+        thumb.className = `gallery-thumb-item ${idx === 0 ? 'selected' : ''}`;
+        thumb.onclick = function() {
+          currentGalleryIndex = idx;
+          updateGalleryView();
+        };
+        thumbsBox.appendChild(thumb);
+      });
+    }
+
+    function nextGalleryImage() {
+      if(currentGalleryImages.length <= 1) return;
+      currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
+      updateGalleryView();
+    }
+
+    function prevGalleryImage() {
+      if(currentGalleryImages.length <= 1) return;
+      currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+      updateGalleryView();
+    }
+
+    function saveCurrentImage() {
+      const currentUrl = currentGalleryImages[currentGalleryIndex];
+      if(!currentUrl) return;
+
+      const a = document.createElement('a');
+      a.href = currentUrl;
+      a.target = '_blank';
+      a.download = `Land_Photo_${currentGalleryIndex + 1}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function openMapModal(query, label) {
+      const encodedQuery = encodeURIComponent(query || "Mirzapur Uttar Pradesh");
+      const embedUrl = `https://maps.google.com/maps?q=${encodedQuery}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+      const directUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
+
+      document.getElementById('mapFrame').src = embedUrl;
+      document.getElementById('mapLocText').innerText = `स्थान: ${label}`;
+      document.getElementById('mapExternalLink').href = directUrl;
+      toggleModal('mapModal');
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = "";
+
+      lands.forEach(item => {
+        const isVerified = item.status === "सत्यापित";
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>#${item.id}</strong></td>
+            <td><strong>${item.title}</strong><br><small style="color:#64748b;">${item.type}</small></td>
+            <td>${item.district}, ${item.state}<br><small style="color:#64748b;">${item.village}</small></td>
+            <td>₹${(item.price/100000).toFixed(2)} लाख<br><small style="color:#64748b;">${item.area}</small></td>
+            <td><span class="khatauni-tag">${item.khatauni}</span></td>
+            <td>${item.owner}<br><small style="color:#64748b;">${item.phone}</small></td>
+            <td>
+              <span class="badge ${isVerified ? 'badge-verified' : 'badge-pending'}">
+                ${item.status}
+              </span>
+            </td>
+            <td>
+              ${!isVerified ? `<button type="button" onclick="toggleVerify(${item.id}, 'सत्यापित')" class="btn btn-green" style="padding:4px 8px; font-size:11px; margin-bottom:4px;">सत्यापित करें</button><br>` : `<button type="button" onclick="toggleVerify(${item.id}, 'लंबित')" class="btn btn-amber" style="padding:4px 8px; font-size:11px; margin-bottom:4px;">अ-सत्यापित करें</button><br>`}
+              <button type="button" onclick="deleteLand(${item.id})" class="btn btn-danger" style="padding:4px 8px; font-size:11px;">हटाएं</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function showPortal(portal) {
+      if(portal === 'admin') {
+        if(!isAdminLoggedIn) {
+          toggleModal('loginModal');
+          return;
+        }
+        document.getElementById('userPortal').style.display = 'none';
+        document.getElementById('adminPortal').style.display = 'block';
+        renderAdminTable();
+      } else {
+        document.getElementById('userPortal').style.display = 'block';
+        document.getElementById('adminPortal').style.display = 'none';
+        renderUserLands();
+      }
+      window.scrollTo(0,0);
+    }
+
+    function handleAdminEntry() {
+      if(isAdminLoggedIn) {
+        showPortal('admin');
+      } else {
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('adminUser').value = "";
+        document.getElementById('adminPass').value = "";
+        toggleModal('loginModal');
+      }
+    }
+
+    // एडमिन लॉगिन (यूज़र: Bhanu, पासवर्ड: Admin123)
+    function processAdminLogin() {
+      const u = (document.getElementById('adminUser').value || "").trim().toLowerCase();
+      const p = (document.getElementById('adminPass').value || "").trim();
+      const errBox = document.getElementById('loginError');
+
+      const isUserValid = (u === "bhanu");
+      const isPassValid = (p.toLowerCase() === "admin123" || p === "Admin123" || p === "एडमिन123");
+
+      if (isUserValid && isPassValid) {
+        isAdminLoggedIn = true;
+        errBox.style.display = 'none';
+        toggleModal('loginModal');
+        showPortal('admin');
+      } else {
+        errBox.style.display = 'block';
+      }
+    }
+
+    function adminLogout() {
+      isAdminLoggedIn = false;
+      showPortal('user');
+    }
+
+    function toggleVerify(id, newStatus) {
+      const item = lands.find(x => x.id === id);
+      if(item) {
+        item.status = newStatus;
+        saveToStorage();
+        renderAdminTable();
+        renderUserLands();
+      }
+    }
+
+    function deleteLand(id) {
+      if(confirm("क्या आप इस जमीन को हटाना चाहते हैं?")) {
+        lands = lands.filter(x => x.id !== id);
+        saveToStorage();
+        renderAdminTable();
+        renderUserLands();
+      }
+    }
+
+    function saveAndSendLand(e) {
+      e.preventDefault();
+      const stateVal = document.getElementById('addState').value;
+      const distVal = document.getElementById('addDistrict').value;
+      const villVal = document.getElementById('addVillage').value;
+
+      const newLand = {
+        id: Date.now(),
+        title: document.getElementById('addTitle').value,
+        state: stateVal,
+        district: distVal,
+        village: villVal,
+        price: parseFloat(document.getElementById('addPrice').value),
+        area: document.getElementById('addArea').value,
+        type: document.getElementById('addType').value,
+        khatauni: document.getElementById('addKhatauni').value,
+        owner: document.getElementById('addOwner').value,
+        phone: document.getElementById('addPhone').value,
+        status: "सत्यापित",
+        images: [
+          "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+          "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=800",
+          "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?w=800"
+        ],
+        mapQuery: `${villVal}, ${distVal}, ${stateVal}`
+      };
+
+      lands.unshift(newLand);
+      saveToStorage();
+      toggleModal('sellModal');
+
+      const msg = `*नई जमीन लिस्टिंग विवरण:*%0A` +
+        `• शीर्षक: ${newLand.title}%0A` +
+        `• राज्य: ${newLand.state}%0A` +
+        `• ज़िला: ${newLand.district}%0A` +
+        `• गाँव/तहसील: ${newLand.village}%0A` +
+        `• खतौनी सं.: ${newLand.khatauni}%0A` +
+        `• कीमत: ₹${newLand.price}%0A` +
+        `• रकबा: ${newLand.area}%0A` +
+        `• विक्रेता: ${newLand.owner} (${newLand.phone})`;
+
+      renderUserLands();
+      alert("जमीन सफलतापूर्वक लिस्ट हो गई है! अब व्हाट्सएप खुलेगा ताकि यह विवरण सुरक्षित स्टोर हो सके।");
+      window.open(`https://wa.me/919696311685?text=${msg}`, '_blank');
+    }
+
+    function openBuyModal(id) {
+      const item = lands.find(x => x.id === id);
+      if(!item) return;
+      document.getElementById('buyLandId').value = item.id;
+      document.getElementById('buyLandTitle').value = `${item.title} (ज़िला: ${item.district}, खतौनी: ${item.khatauni})`;
+      toggleModal('buyModal');
+    }
+
+    function sendBuyInquiry(e) {
+      e.preventDefault();
+      const landTitle = document.getElementById('buyLandTitle').value;
+      const bName = document.getElementById('buyerName').value;
+      const bPhone = document.getElementById('buyerPhone').value;
+      const bMsg = document.getElementById('buyerMsg').value;
+
+      const waText = `*जमीन खरीदने में रुचि (Inquiry):*%0A` +
+        `• जमीन: ${landTitle}%0A` +
+        `• खरीदार का नाम: ${bName}%0A` +
+        `• मोबाइल नंबर: ${bPhone}%0A` +
+        `• संदेश: ${bMsg || 'मुझे यह जमीन देखनी है।'}`;
+
+      toggleModal('buyModal');
+      window.open(`https://wa.me/919696311685?text=${waText}`, '_blank');
+    }
+
+    function runFilter() {
+      const st = document.getElementById('stateFilter').value.toLowerCase();
+      const dist = document.getElementById('districtFilter').value.trim().toLowerCase();
+      const tp = document.getElementById('typeFilter').value;
+
+      const filtered = lands.filter(item => {
+        const matchState = !st || item.state.toLowerCase().includes(st);
+        const matchDistrict = !dist || item.district.toLowerCase().includes(dist);
+        const matchType = !tp || item.type === tp;
+        return matchState && matchDistrict && matchType;
+      });
+
+      renderUserLands(filtered);
+    }
+
+    function clearFilters() {
+      document.getElementById('stateFilter').value = "";
+      document.getElementById('districtFilter').value = "";
+      document.getElementById('typeFilter').value = "";
+      renderUserLands(lands);
+    }
+
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('active');
+    }
+
+    // पहला लोड
+    renderUserLands();
+  </script>
+</body>
+</html>
